@@ -28,55 +28,69 @@ export class IdeStack extends Stack {
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'allow ssh access from the world');
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'allow rdp access from the world');
 
-        const initData = ec2.CloudFormationInit.fromElements(
-            ec2.InitFile.fromFileInline("c:\\cfn\\DisableESC.ps1", "./src/DisableESC.ps1"),
-            ec2.InitFile.fromFileInline("c:\\cfn\\EnableSshServer.ps1", "./src/EnableSshServer.ps1"),
-            ec2.InitPackage.msi("https://s3.amazonaws.com/aws-cli/AWSCLI64.msi"),
-            ec2.InitCommand.shellCommand('powershell.exe iex ((New-Object System.Net.WebClient).DownloadString(\'https://chocolatey.org/install.ps1\'))', {
-                key: "00-InstallChoco",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.minutes(3))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install python3 -y', {
-                key: "01-installPython3",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install oraclejdk -y', {
-                key: "02-installOraclejdk",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install googlechrome -y', {
-                key: "03-installGooglechrome",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install microsoft-edge -y', {
-                key: "04-installEdge",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install 7zip.install -y', {
-                key: "05-install7z",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install vscode -y', {
-                key: "06-installVSCode",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe choco install pycharm -y', {
-                key: "07-installPycharm",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe -File "c:\\cfn\\DisableESC.ps1"', {
-                key: "08-disableESC",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(10))
-            }),
-            ec2.InitCommand.shellCommand('powershell.exe -File "c:\\cfn\\EnableSshServer.ps1"', {
-                key: "09-EnableSshServer",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(10))
-            }),
-            ec2.InitCommand.shellCommand('cfn-signal.exe -e %ERRORLEVEL% --resource ideInstance --stack ' + this.stackId + ' --region ' + this.region, {
-                key: "99-Signal",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
-            })
-        )
+
+        const initData = ec2.CloudFormationInit.fromConfigSets({
+            configSets: {
+                // Applies the configs below in this order
+                default: ['chocolateyPreInstall', 'windowsBase', 'devTools'],
+            },
+            configs: {
+                chocolateyPreInstall: new ec2.InitConfig([
+                    ec2.InitCommand.shellCommand('powershell.exe iex ((New-Object System.Net.WebClient).DownloadString(\'https://chocolatey.org/install.ps1\'))', {
+                        key: "01-InstallChoco",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.minutes(3)),
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe -Command Restart-Computer -force', {
+                        key: "02-Restart",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.forever()
+                    }),
+                ]),
+                windowsBase: new ec2.InitConfig([
+                    ec2.InitFile.fromFileInline("c:\\cfn\\DisableESC.ps1", "./src/DisableESC.ps1"),
+                    ec2.InitFile.fromFileInline("c:\\cfn\\EnableSshServer.ps1", "./src/EnableSshServer.ps1"),
+                    ec2.InitPackage.msi("https://s3.amazonaws.com/aws-cli/AWSCLI64.msi"),
+                    ec2.InitCommand.shellCommand('powershell.exe -File "c:\\cfn\\DisableESC.ps1"', {
+                        key: "08-disableESC",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(10))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe -File "c:\\cfn\\EnableSshServer.ps1"', {
+                        key: "09-EnableSshServer",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(10))
+                    }),
+                ]),
+                devTools: new ec2.InitConfig([
+                    ec2.InitCommand.shellCommand('powershell.exe choco install python3 -y', {
+                        key: "01-installPython3",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install oraclejdk -y', {
+                        key: "02-installOraclejdk",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install googlechrome -y', {
+                        key: "03-installGooglechrome",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install microsoft-edge -y', {
+                        key: "04-installEdge",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install 7zip.install -y', {
+                        key: "05-install7z",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install vscode -y', {
+                        key: "06-installVSCode",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                    ec2.InitCommand.shellCommand('powershell.exe choco install pycharm -y', {
+                        key: "07-installPycharm",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    }),
+                ]),
+            },
+        })
+
         const labRole = Role.fromRoleArn(
             this,
             'imported-role',
@@ -94,13 +108,10 @@ export class IdeStack extends Stack {
             // you can use `CloudFormationInit.fromElements()`.
             init: initData,
             initOptions: {                               // Optional, how long the installation is expected to take (5 minutes by default)
+                configSets: ['default'],
                 timeout: Duration.minutes(30),
                 ignoreFailures: false,
-
-                // Optional, whether to include the --url argument when running cfn-init and cfn-signal commands (false by default)
                 includeUrl: true,
-
-                // Optional, whether to include the --role argument when running cfn-init and cfn-signal commands (false by default)
                 includeRole: true,
             },
             role: labRole,
