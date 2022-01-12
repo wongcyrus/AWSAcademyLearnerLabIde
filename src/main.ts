@@ -28,11 +28,15 @@ export class IdeStack extends Stack {
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'allow ssh access from the world');
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'allow rdp access from the world');
 
-
+        const devTools = ['python3', 'oraclejdk', 'googlechrome', 'git', '7zip.install', 'vscode', 'pycharm'];
+        const devToolConfigs = devTools.map((c, i) => ec2.InitCommand.shellCommand(`powershell.exe choco install ${c} -y`, {
+            key: `${(i).toString().padStart(2, '0')}-install`,
+            waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
+        }))
         const initData = ec2.CloudFormationInit.fromConfigSets({
             configSets: {
                 // Applies the configs below in this order
-                default: ['chocolateyPreInstall', 'windowsBase', 'devTools'],
+                default: ['chocolateyPreInstall', 'windowsBase', 'devTools','complete'],
             },
             configs: {
                 chocolateyPreInstall: new ec2.InitConfig([
@@ -59,35 +63,12 @@ export class IdeStack extends Stack {
                         waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
                     }),
                 ]),
-                devTools: new ec2.InitConfig([
-                    ec2.InitCommand.shellCommand('powershell.exe choco install python3 -y', {
-                        key: "01-installPython3",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install oraclejdk -y', {
-                        key: "02-installOraclejdk",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install googlechrome -y', {
-                        key: "03-installGooglechrome",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install microsoft-edge -y', {
-                        key: "04-installEdge",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install 7zip.install -y', {
-                        key: "05-install7z",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install vscode -y', {
-                        key: "06-installVSCode",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
-                    ec2.InitCommand.shellCommand('powershell.exe choco install pycharm -y', {
-                        key: "07-installPycharm",
-                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
-                    }),
+                devTools: new ec2.InitConfig(devToolConfigs),
+                complete: new ec2.InitConfig([
+                    ec2.InitCommand.shellCommand('cfn-signal.exe -e %ERRORLEVEL% --resource ideInstance --stack ' + this.stackId + ' --region ' + this.region, {
+                        key: "00-Signal",
+                        waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                    })
                 ]),
             },
         })
@@ -110,7 +91,7 @@ export class IdeStack extends Stack {
             init: initData,
             initOptions: {                               // Optional, how long the installation is expected to take (5 minutes by default)
                 configSets: ['default'],
-                timeout: Duration.minutes(30),
+                timeout: Duration.minutes(60),
                 ignoreFailures: false,
                 includeUrl: true,
                 includeRole: true,

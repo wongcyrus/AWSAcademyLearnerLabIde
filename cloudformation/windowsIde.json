@@ -355,7 +355,7 @@
             "Fn::Join": [
               "",
               [
-                "<powershell># fingerprint: c8a7944d82528774\ncfn-init.exe -v --region ",
+                "<powershell># fingerprint: 335b1452c622d76c\ncfn-init.exe -v --region ",
                 {
                   "Ref": "AWS::Region"
                 },
@@ -406,7 +406,8 @@
             "default": [
               "chocolateyPreInstall",
               "windowsBase",
-              "devTools"
+              "devTools",
+              "complete"
             ]
           },
           "chocolateyPreInstall": {
@@ -451,33 +452,52 @@
           },
           "devTools": {
             "commands": {
-              "01-installPython3": {
+              "00-install": {
                 "command": "powershell.exe choco install python3 -y",
                 "waitAfterCompletion": 0
               },
-              "02-installOraclejdk": {
+              "01-install": {
                 "command": "powershell.exe choco install oraclejdk -y",
                 "waitAfterCompletion": 0
               },
-              "03-installGooglechrome": {
+              "02-install": {
                 "command": "powershell.exe choco install googlechrome -y",
                 "waitAfterCompletion": 0
               },
-              "04-installGit": {
+              "03-install": {
                 "command": "powershell.exe choco install git -y",
                 "waitAfterCompletion": 0
               },
-              "05-install7z": {
+              "04-install": {
                 "command": "powershell.exe choco install 7zip.install -y",
                 "waitAfterCompletion": 0
               },
-              "06-installVSCode": {
+              "05-install": {
                 "command": "powershell.exe choco install vscode -y",
                 "waitAfterCompletion": 0
               },
-              "07-installPycharm": {
+              "06-install": {
                 "command": "powershell.exe choco install pycharm -y",
                 "waitAfterCompletion": 0
+              }
+            }
+          },
+          "complete": {
+            "commands": {
+              "00-Signal": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "cfn-signal.exe -e %ERRORLEVEL% --resource ideInstance --stack ",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      " --region us-east-1"
+                    ]
+                  ]
+                },
+                "waitAfterCompletion": 5
               }
             }
           }
