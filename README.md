@@ -5,8 +5,8 @@ Learner lab does allow students to use shared AMI and even cannot create AMI so 
 ## Setup
 Open AWS Cloud Shell and run the following commands:
 ````
-wget https://github.com/wongcyrus/AWSAcademyLearnerLabIde/raw/master/cloudformation/windowsIde.yaml
-aws cloudformation create-stack --stack-name ide --template-body file://windowsIde.yaml --capabilities "CAPABILITY_IAM"
+wget https://github.com/wongcyrus/AWSAcademyLearnerLabIde/raw/master/cloudformation/windowsIde.json
+aws cloudformation create-stack --stack-name ide --template-body file://windowsIde.json --capabilities "CAPABILITY_IAM"
 `````
 
 ## List of pre-installed Tools
@@ -16,9 +16,10 @@ aws cloudformation create-stack --stack-name ide --template-body file://windowsI
 4. Python 3
 5. Oracle JDK
 6. Google Chrome
-7. 7 zip
-8. Visual Studio Code
-9. Pycharm
+7. git
+8. 7 zip
+9. Visual Studio Code
+10. Pycharm
 
 ## Network and Security
 It is in a new VPC and EC2 runs in a public subnets. Security group sets 2 rules all RDP and SSH from any ip.
