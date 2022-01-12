@@ -1,7 +1,7 @@
 import {App, Duration, Stack, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import {InstanceClass, InstanceSize, InstanceType} from 'aws-cdk-lib/aws-ec2';
+import {InstanceClass, InstanceSize, InstanceType, SubnetType} from 'aws-cdk-lib/aws-ec2';
 import {Role} from "aws-cdk-lib/aws-iam";
 
 export class IdeStack extends Stack {
@@ -32,9 +32,9 @@ export class IdeStack extends Stack {
             ec2.InitFile.fromFileInline("c:\\cfn\\DisableESC.ps1", "./src/DisableESC.ps1"),
             ec2.InitFile.fromFileInline("c:\\cfn\\EnableSshServer.ps1", "./src/EnableSshServer.ps1"),
             ec2.InitPackage.msi("https://s3.amazonaws.com/aws-cli/AWSCLI64.msi"),
-            ec2.InitCommand.shellCommand('powershell.exe [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(\'https://chocolatey.org/install.ps1\'))', {
+            ec2.InitCommand.shellCommand('powershell.exe iex ((New-Object System.Net.WebClient).DownloadString(\'https://chocolatey.org/install.ps1\'))', {
                 key: "00-InstallChoco",
-                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(5))
+                waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.minutes(3))
             }),
             ec2.InitCommand.shellCommand('powershell.exe choco install python3 -y', {
                 key: "01-installPython3",
@@ -85,6 +85,8 @@ export class IdeStack extends Stack {
         );
         const instance = new ec2.Instance(this, 'Instance', {
             vpc,
+            vpcSubnets: vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
+            securityGroup: ec2SecurityGroup,
             instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.LARGE),
             machineImage: ec2.MachineImage.genericWindows({"us-east-1": "ami-065024219ebe5213e"}),
 
@@ -105,7 +107,6 @@ export class IdeStack extends Stack {
             keyName: "vockey",
         });
         instance.instance.overrideLogicalId('ideInstance');
-        // instance.node.tryRemoveChild('InstanceProfile');
 
     }
 }
