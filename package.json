@@ -10,6 +10,7 @@
     "destroy": "npx projen destroy",
     "diff": "npx projen diff",
     "eslint": "npx projen eslint",
+    "gencfn": "npx projen gencfn",
     "package": "npx projen package",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",

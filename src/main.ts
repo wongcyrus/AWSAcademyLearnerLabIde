@@ -7,7 +7,8 @@ import {Role} from "aws-cdk-lib/aws-iam";
 export class IdeStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps = {}) {
         super(scope, id, props);
-
+        const devTools = ['python3', 'oraclejdk', 'googlechrome', 'git', '7zip.install', 'vscode', 'pycharm'];
+        const amiId = "ami-065024219ebe5213e";
         const vpc = new ec2.Vpc(this, 'VPC', {
             cidr: "10.0.0.0/16",
             subnetConfiguration: [{
@@ -28,7 +29,7 @@ export class IdeStack extends Stack {
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'allow ssh access from the world');
         ec2SecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'allow rdp access from the world');
 
-        const devTools = ['python3', 'oraclejdk', 'googlechrome', 'git', '7zip.install', 'vscode', 'pycharm'];
+
         const devToolConfigs = devTools.map((c, i) => ec2.InitCommand.shellCommand(`powershell.exe choco install ${c} -y`, {
             key: `${(i).toString().padStart(2, '0')}-install`,
             waitAfterCompletion: ec2.InitCommandWaitDuration.of(Duration.seconds(0))
@@ -36,7 +37,7 @@ export class IdeStack extends Stack {
         const initData = ec2.CloudFormationInit.fromConfigSets({
             configSets: {
                 // Applies the configs below in this order
-                default: ['chocolateyPreInstall', 'windowsBase', 'devTools','complete'],
+                default: ['chocolateyPreInstall', 'windowsBase', 'devTools', 'complete'],
             },
             configs: {
                 chocolateyPreInstall: new ec2.InitConfig([
@@ -84,10 +85,7 @@ export class IdeStack extends Stack {
             vpcSubnets: vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
             securityGroup: ec2SecurityGroup,
             instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.LARGE),
-            machineImage: ec2.MachineImage.genericWindows({"us-east-1": "ami-065024219ebe5213e"}),
-
-            // Showing the most complex setup, if you have simpler requirements
-            // you can use `CloudFormationInit.fromElements()`.
+            machineImage: ec2.MachineImage.genericWindows({"us-east-1": amiId}),
             init: initData,
             initOptions: {                               // Optional, how long the installation is expected to take (5 minutes by default)
                 configSets: ['default'],

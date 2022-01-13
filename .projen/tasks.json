@@ -109,6 +109,14 @@
         }
       ]
     },
+    "gencfn": {
+      "name": "gencfn",
+      "steps": [
+        {
+          "exec": "cdk synthesize && node gencfn.js"
+        }
+      ]
+    },
     "package": {
       "name": "package",
       "description": "Creates the distribution package"

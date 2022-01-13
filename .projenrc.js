@@ -12,4 +12,7 @@ const project = new awscdk.AwsCdkTypeScriptApp({
   // devDeps: [],             /* Build dependencies for this module. */
   // packageName: undefined,  /* The "name" in package.json. */
 });
+project.addTask('gencfn',{
+  exec: 'cdk synthesize -q && node gencfn.js'
+})
 project.synth();
