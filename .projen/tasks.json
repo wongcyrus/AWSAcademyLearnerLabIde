@@ -113,7 +113,7 @@
       "name": "gencfn",
       "steps": [
         {
-          "exec": "cdk synth -q && node gencfn.js pycharm"
+          "exec": "cdk synth -q && node gencfn.js "
         }
       ]
     },

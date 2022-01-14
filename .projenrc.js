@@ -2,7 +2,7 @@ const {awscdk} = require("projen");
 
 const amiId = 'ami-065024219ebe5213e';
 // const devTools = ['pycharm','webstorm','intellijidea','php','phpstorm'];
-const devTools = ['pycharm'];
+const devTools = [];
 
 const fileName = devTools.map(c => c.replace(/\W/g, '')).join('_');
 

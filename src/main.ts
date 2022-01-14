@@ -7,9 +7,9 @@ import {Role} from "aws-cdk-lib/aws-iam";
 export class IdeStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps = {}) {
         super(scope, id, props);
-        const coreDevTools = ['python3', 'oraclejdk','node', 'googlechrome', 'git', '7zip.install', 'vscode'];
-        const extraDevTools = this.node.tryGetContext('devTools');
-        const devTools = coreDevTools.concat(extraDevTools);
+        const coreDevTools = ['python3', 'oraclejdk', 'node', 'googlechrome', 'git', '7zip.install', 'vscode'];
+        const extraDevTools = this.node.tryGetContext('devTools') as Array<string>;
+        const devTools = extraDevTools && extraDevTools.length == 0 ? coreDevTools.concat(extraDevTools) : coreDevTools;
         const amiId = this.node.tryGetContext('amiId');
         const vpc = new ec2.Vpc(this, 'VPC', {
             cidr: "10.0.0.0/16",
@@ -86,7 +86,7 @@ export class IdeStack extends Stack {
             vpc,
             vpcSubnets: vpc.selectSubnets({subnetType: SubnetType.PUBLIC}),
             securityGroup: ec2SecurityGroup,
-            instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.LARGE),
+            instanceType: InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
             machineImage: ec2.MachineImage.genericWindows({"us-east-1": amiId}),
             init: initData,
             initOptions: {                               // Optional, how long the installation is expected to take (5 minutes by default)

@@ -331,7 +331,7 @@
           "Ref": "InstanceInstanceProfileAB5AEF02"
         },
         "ImageId": "ami-065024219ebe5213e",
-        "InstanceType": "t3.large",
+        "InstanceType": "m5.large",
         "KeyName": "vockey",
         "SecurityGroupIds": [
           {
@@ -355,7 +355,7 @@
             "Fn::Join": [
               "",
               [
-                "<powershell># fingerprint: 335b1452c622d76c\ncfn-init.exe -v --region ",
+                "<powershell># fingerprint: f6bb727efb87fe1f\ncfn-init.exe -v --region ",
                 {
                   "Ref": "AWS::Region"
                 },
@@ -461,23 +461,23 @@
                 "waitAfterCompletion": 0
               },
               "02-install": {
-                "command": "powershell.exe choco install googlechrome -y",
+                "command": "powershell.exe choco install node -y",
                 "waitAfterCompletion": 0
               },
               "03-install": {
-                "command": "powershell.exe choco install git -y",
+                "command": "powershell.exe choco install googlechrome -y",
                 "waitAfterCompletion": 0
               },
               "04-install": {
-                "command": "powershell.exe choco install 7zip.install -y",
+                "command": "powershell.exe choco install git -y",
                 "waitAfterCompletion": 0
               },
               "05-install": {
-                "command": "powershell.exe choco install vscode -y",
+                "command": "powershell.exe choco install 7zip.install -y",
                 "waitAfterCompletion": 0
               },
               "06-install": {
-                "command": "powershell.exe choco install pycharm -y",
+                "command": "powershell.exe choco install vscode -y",
                 "waitAfterCompletion": 0
               }
             }
@@ -507,7 +507,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwQ6CMAyGn8X7qIrRu/FgvBEwXs2YNVahI1unIYR3FwVFT/365U//xrCE2UQ/fGROt6igHJpMtLmpTh0bNDE0h8qozZkPyUYlIS/IZCFnlJcbKbVBcK/zAkc/urX31pAWsvwNv2DHgq5LbrXgQ9dDzbCtpXvkUiKLytAER1JvnQ3Vu+BP7NiLZjOc7LlVpEv4EYmzZyo6n6K3wfXpD7eK7Qnh6qf3+QrmC4gnV08UucBCJULazyfD0AckLgEAAA=="
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwQ6CMAyGn8X7qIqJ8Wo8GG8EjFczZo1V6MjWaQjh3UVB0VO/fvnTvzGsYDbRDx+Z0y0qKIcmE21uqlPHBk0MzaEyanPmQ7JRScgLMlnIGeXlRkptENzrvMDRj27tvTWkhSx/wy/YsaDrklst+ND1UDNsa+keuZTIojI0wZHUW2dD9S74Ezv2otkMJ3tuFekSfkTi7JmKzqfobXB9+sOtYntCuPrpfb6E+QLiydUTRS6wUImQ9vMJS2obXi4BAAA="
       },
       "Metadata": {
         "aws:cdk:path": "ide-stack-dev/CDKMetadata/Default"

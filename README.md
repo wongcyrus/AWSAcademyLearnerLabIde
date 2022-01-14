@@ -52,7 +52,7 @@ Currently, I have pre-built several ides:
 3. pycharm_webstorm.json
 4. pycharm_webstorm_intellijidea_php_phpstorm.json
 5. webstorm_intellijidea_php_phpstorm.json
-6. windowsIde.json (same as pycharm.json)
+6. windowsIde.json (VS Code only!)
 
 Students just need to change the file name of those 2 setup commands, then they can have different IDE.
 

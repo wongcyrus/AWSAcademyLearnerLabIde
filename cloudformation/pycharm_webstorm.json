@@ -331,7 +331,7 @@
           "Ref": "InstanceInstanceProfileAB5AEF02"
         },
         "ImageId": "ami-065024219ebe5213e",
-        "InstanceType": "t3.large",
+        "InstanceType": "m5.large",
         "KeyName": "vockey",
         "SecurityGroupIds": [
           {
