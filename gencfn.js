@@ -7,7 +7,9 @@ delete jsonData.Rules;
 
 let data = JSON.stringify(jsonData, null, 2);
 
-fs.writeFile('./cloudformation/windowsIde.json', data, (err) => {
+const fileName = process.argv[2];
+
+fs.writeFile(`./cloudformation/${fileName}.json`, data, (err) => {
     if (err) throw err;
     console.log('Template written to file');
 });

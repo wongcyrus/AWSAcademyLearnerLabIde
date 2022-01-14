@@ -1,5 +1,11 @@
 {
   "app": "npx ts-node -P tsconfig.json --prefer-ts-exts src/main.ts",
+  "context": {
+    "amiId": "ami-065024219ebe5213e",
+    "devTools": [
+      "pycharm"
+    ]
+  },
   "output": "cdk.out",
   "build": "npx projen bundle",
   "watch": {

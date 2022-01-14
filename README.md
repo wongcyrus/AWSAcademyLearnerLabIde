@@ -26,33 +26,47 @@ Start Learner Lab, login AWS console, get windows password and connect it throug
 7. git
 8. 7 zip
 9. Visual Studio Code
-10. Pycharm
 
 ## Network and Security
 It is in a new VPC and EC2 runs in a public subnets. Security group sets 2 rules all RDP and SSH from any ip.
 
-## Reminder
-1. AWS Academy Learner Lab stops all EC2 instances after 4 hours session expired.
-2. Students will lose everything if their credits are used up.
-3. AWS Academy Learner Lab is not design for learning AWS and don't trust the list of supporting services! Most of them cannot use as AWS services must create a lot of IAM roles and policies but the learner lab does let you touch IAM at all.
-
 ## Development
 Your class may need to other software, and you can first check it from https://community.chocolatey.org/packages .
 Add or remove packages or change windows AMI (AWS Academy Learner Lab blocked AWS SSM parameter store so you have to hard code!).
-```typescript
-const devTools = ['python3', 'oraclejdk', 'googlechrome', 'git', '7zip.install', 'vscode', 'pycharm'];
-const amiId = "ami-065024219ebe5213e";
+.pro
+Modify .projenrc.js
+```javascript
+const amiId = 'ami-065024219ebe5213e';
+const devTools = ['pycharm','webstorm'];
 ```
 Follow https://github.com/projen/projen to initialize projen. In short,
 1. Install yarn
-2. Run ```npx projen```
-3. Change source code.
+2. Modify .projenrc.js
+3. Run ```npx projen```
 4. Run ``` npx projen gencfn```
 5. The CloudFormation Template is ```cloudformation/windowsIde.json```
 
-The standard way of AWS CDk deploy is not working in AWS Academy Learner Lab as you cannot complete CDK Boostrap without creating an IAM role, and the hack is to not use asset, SSM, no IAM role/policy, ....
+Currently, I have pre-built several ides:
+1. intellijidea.json
+2. pycharm.json
+3. pycharm_webstorm.json
+4. pycharm_webstorm_intellijidea_php_phpstorm.json
+5. webstorm_intellijidea_php_phpstorm.json
+6. windowsIde.json (same as pycharm.json)
 
-# #WTFAWSAcademyLearnerLab
+Students just need to change the file name of those 2 setup commands, then they can have different IDE.
+
+## JetBrains Free Educational Licenses
+Students can get free licences for all JetBrains tools.
+https://www.jetbrains.com/community/education/#students
+
+## Remarks
+1. AWS Academy Learner Lab stops all EC2 instances after 4 hours session expired.
+2. Students will lose everything if their credits are used up.
+3. AWS Academy Learner Lab is not design for learning AWS and don't trust the list of supporting services! Most of them cannot use as AWS services must create a lot of IAM roles and policies but the learner lab does let you touch IAM at all.
+4. The standard way of AWS CDk deploy is not working in AWS Academy Learner Lab as you cannot complete CDK Boostrap without creating an IAM role, and the hack is to not use asset, SSM, no IAM role/policy, ....
+
+## #WTFAWSAcademyLearnerLab
 1. Can someone explain why students create AMI is a dangerous action?
 2. Students can create EKS cluster but disabled IAM OIDC provider. And, at the end, the cluster is not able to run kubectl!
 3. AWS SAM, AWS CDK, AWS Amplify, ... are all death as students are not able to create IAM role.

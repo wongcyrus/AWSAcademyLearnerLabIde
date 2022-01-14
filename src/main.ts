@@ -7,8 +7,10 @@ import {Role} from "aws-cdk-lib/aws-iam";
 export class IdeStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps = {}) {
         super(scope, id, props);
-        const devTools = ['python3', 'oraclejdk', 'googlechrome', 'git', '7zip.install', 'vscode', 'pycharm'];
-        const amiId = "ami-065024219ebe5213e";
+        const coreDevTools = ['python3', 'oraclejdk','node', 'googlechrome', 'git', '7zip.install', 'vscode'];
+        const extraDevTools = this.node.tryGetContext('devTools');
+        const devTools = coreDevTools.concat(extraDevTools);
+        const amiId = this.node.tryGetContext('amiId');
         const vpc = new ec2.Vpc(this, 'VPC', {
             cidr: "10.0.0.0/16",
             subnetConfiguration: [{
