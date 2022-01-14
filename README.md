@@ -5,8 +5,8 @@ Learner lab does allow students to use shared AMI and even cannot create AMI so 
 ## How to set up?
 Start Learner Lab, login AWS console, open AWS Cloud Shell and run the following commands:
 ```shell
-wget https://github.com/wongcyrus/AWSAcademyLearnerLabIde/raw/master/cloudformation/windowsIde.json
-aws cloudformation create-stack --stack-name ide --template-body file://windowsIde.json --capabilities "CAPABILITY_IAM"
+wget https://github.com/wongcyrus/AWSAcademyLearnerLabIde/raw/master/cloudformation/pycharm.json
+aws cloudformation create-stack --stack-name ide --template-body file://pycharm.json --capabilities "CAPABILITY_IAM"
 ````
 
 [![How to set up AWS Academy Learner Lab IDE - Windows 2022 Server?](https://img.youtube.com/vi/8kQn1nROHRA/0.jpg)](https://www.youtube.com/watch?v=8kQn1nROHRA)
@@ -18,7 +18,7 @@ Start Learner Lab, login AWS console, get windows password and connect it throug
 
 ## List of pre-installed Tools
 1. Chocolatey Package Manager
-2. SSH Server (Use the same login confidential for RDP and it uses "vockey" from Learner Lab)
+2. SSH Server (Use the same login confidential for RDP, and it uses "vockey" from Learner Lab)
 3. The latest AWS CLI.
 4. Python 3
 5. Oracle JDK
@@ -65,6 +65,7 @@ https://www.jetbrains.com/community/education/#students
 2. Students will lose everything if their credits are used up.
 3. AWS Academy Learner Lab is not design for learning AWS and don't trust the list of supporting services! Most of them cannot use as AWS services must create a lot of IAM roles and policies but the learner lab does let you touch IAM at all.
 4. The standard way of AWS CDk deploy is not working in AWS Academy Learner Lab as you cannot complete CDK Boostrap without creating an IAM role, and the hack is to not use asset, SSM, no IAM role/policy, ....
+5. Currently,the instance is in M5.large and students can change instance type but it cannot use the size bigger than large. 
 
 ## #WTFAWSAcademyLearnerLab
 1. Can someone explain why students create AMI is a dangerous action?
