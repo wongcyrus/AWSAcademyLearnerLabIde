@@ -7,7 +7,7 @@ import {Role} from "aws-cdk-lib/aws-iam";
 export class IdeStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps = {}) {
         super(scope, id, props);
-        const coreDevTools = ['python3', 'oraclejdk', 'node', 'googlechrome', 'git', '7zip.install', 'vscode'];
+        const coreDevTools = ['python3', 'oraclejdk', 'nodejs', 'googlechrome', 'git', '7zip.install', 'vscode'];
         const extraDevTools = this.node.tryGetContext('devTools') as Array<string>;
         const devTools = extraDevTools && extraDevTools.length == 0 ? coreDevTools.concat(extraDevTools) : coreDevTools;
         const amiId = this.node.tryGetContext('amiId');
