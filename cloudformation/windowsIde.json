@@ -461,7 +461,7 @@
                 "waitAfterCompletion": 0
               },
               "02-install": {
-                "command": "powershell.exe choco install node -y",
+                "command": "powershell.exe choco install nodejs -y",
                 "waitAfterCompletion": 0
               },
               "03-install": {
