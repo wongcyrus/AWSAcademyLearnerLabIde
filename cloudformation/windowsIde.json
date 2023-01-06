@@ -330,7 +330,7 @@
         "IamInstanceProfile": {
           "Ref": "InstanceInstanceProfileAB5AEF02"
         },
-        "ImageId": "ami-0fb5befc1450ca205",
+        "ImageId": "ami-0be29bafdaad782db",
         "InstanceType": "m5.large",
         "KeyName": "vockey",
         "SecurityGroupIds": [
